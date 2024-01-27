@@ -1,19 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+import data from "@/data.json"
+import { Task } from '@/types'
 
-export enum Status{
-    Todo = "ToDo",
-    Ongoing = "Ongoing",
-    Completed = "Completed"
-}
 
-export interface Task {
-  value: number
-  title: string
-  description: string
-  date: Date
-  status: Status
-}
 
 
 export interface TaskState {
@@ -22,6 +12,7 @@ export interface TaskState {
 
 const initialState:TaskState = {
   tasks:[]
+  // tasks:data.tasks.map(t=>({...t,date:new Date()}))
 }
 
 export const taskSlice = createSlice({
