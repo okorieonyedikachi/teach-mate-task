@@ -1,0 +1,56 @@
+{
+  "tasks": [
+    {
+      "title": "Build UI for onboarding flow",
+      "description": "",
+      "status": "Todo"
+    },
+    {
+      "title": "QA and test all major user journeys",
+      "description": "Once we feel version one is ready, we need to rigorously test it both internally and externally to identify any major gaps.",
+      "status": "Todo"
+    },
+    {
+      "title": "Build settings UI",
+      "description": "",
+      "status": "Todo"
+    },
+
+    {
+      "title": "Design settings and search pages",
+      "description": "",
+      "status": "Ongoing"
+    },
+    {
+      "title": "Add account management endpoints",
+      "description": "",
+      "status": "Ongoing"
+    },
+    {
+      "title": "Design onboarding flow",
+      "description": "",
+      "status": "Ongoing"
+    },
+    {
+      "title": "Add search enpoints",
+      "description": "",
+      "status": "Ongoing"
+    },
+    {
+      "title": "Add authentication endpoints",
+      "description": "",
+      "status": "Ongoing"
+    },
+
+    {
+      "title": "Create wireframe prototype",
+      "description": "Create a greyscale clickable wireframe prototype to test our asssumptions so far.",
+      "status": "Completed"
+    },
+    {
+      "title": "Review results of usability tests and iterate",
+      "description": "Keep iterating through the subtasks until we're clear on the core concepts for the app",
+      "status": "Completed"
+    }
+  ]
+}
