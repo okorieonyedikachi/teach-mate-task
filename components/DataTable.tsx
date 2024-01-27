@@ -41,18 +41,15 @@ import { Dialog, DialogTrigger } from "./ui/dialog";
 import { useDispatch } from "react-redux";
 import { taskActions } from "@/store/task/taskSlice";
 
-
 export const DataTable = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const handleDeleteClick = (id: string) => {
-    dispatch(taskActions.deleteTask(id));
-  };
+  // const handleDeleteClick = (id: string) => {
+  //   dispatch(taskActions.deleteTask(id));
+  // };
 
-  return {
-
-  }
-}
+  return {};
+};
 
 export const columns: ColumnDef<Task>[] = [
   {
@@ -101,7 +98,7 @@ export const columns: ColumnDef<Task>[] = [
   },
   {
     accessorKey: "date",
-    header: () => <div className="text-right">Date</div>,
+    header: () => <div className="text-right">Due Date</div>,
     cell: ({ row }) => {
       // Format the amount as a dollar amount
       const formatted = new Intl.DateTimeFormat("en-US", {}).format(
@@ -116,33 +113,42 @@ export const columns: ColumnDef<Task>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const task = row.original;
+      const dispatch = useDispatch();
 
-    
+      const handleDeleteClick = (id: string) => {
+        dispatch(taskActions.deleteTask(id));
+      };
 
       return (
-        <Dialog>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(task.title)}
-              >
-                Copy Task Title
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem>
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </Dialog>
+        // <Dialog>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(task.title)}
+            >
+              Copy Task Title
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Edit</DropdownMenuItem>
+            {/* <DialogTrigger> */}
+            <DropdownMenuItem
+              onClick={() => {
+                handleDeleteClick(task.id);
+              }}
+            >
+              Delete
+            </DropdownMenuItem>
+            {/* </DialogTrigger> */}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        // </Dialog>
       );
     },
   },
@@ -292,12 +298,10 @@ export function TodoTable() {
   );
 }
 
+// function deleteTask(id: string): any {
+//   throw new Error("Function not implemented.");
+// }
 
-function deleteTask(id: string): any {
-  throw new Error("Function not implemented.");
-}
-
-function dispatch(arg0: any) {
-  throw new Error("Function not implemented.");
-}
-
+// function dispatch(arg0: any) {
+//   throw new Error("Function not implemented.");
+// }
