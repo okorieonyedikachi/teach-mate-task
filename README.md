@@ -31,7 +31,7 @@ To run the task mangement app project locally, follow these steps
 - Redux State Management: Efficiently manages the application's state using Redux.
 
 # Component Structure
--Separation of Concerns: Components are structured to follow the principles of separation of concerns. TaskList and TaskForm handle specific functionalities, promoting code readability and maintainability.
+- Separation of Concerns: Components are structured to follow the principles of separation of concerns. TaskList and TaskForm handle specific functionalities, promoting code readability and maintainability.
 Responsive Design
 
 - Mobile-First Approach: The responsive design follows a mobile-first approach, ensuring that the dashboard is accessible and functional on various devices.

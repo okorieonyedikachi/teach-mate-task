@@ -3,9 +3,6 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import data from "@/data.json"
 import { Task } from '@/types'
 
-
-
-
 export interface TaskState {
     tasks: Task[]
   }
@@ -23,6 +20,16 @@ export const taskSlice = createSlice({
     addNewTask: (state, action: PayloadAction<Task>) => {
       state.tasks.push(action.payload)
     },
+    deleteTask: (state, action: PayloadAction<Task['id']>) => {
+      const taskId = action.payload;
+      state.tasks = state.tasks.filter((task) => task.id !== taskId);
+    },
+    // deleteTask: (state, action: PayloadAction<Task['id']>) => {
+    //   const taskIndex = state.tasks.findIndex((task) => task.id === action.payload);
+    //   if (taskIndex !== -1) {
+    //     state.tasks.filter(taskIndex, 1);
+    //   }
+    // },
   },
 })
 

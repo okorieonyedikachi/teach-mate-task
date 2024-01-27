@@ -37,9 +37,22 @@ import {
 } from "@/components/ui/table";
 import { Task } from "@/types";
 import { useAppSelector } from "@/store/hooks";
+import { Dialog, DialogTrigger } from "./ui/dialog";
+import { useDispatch } from "react-redux";
+import { taskActions } from "@/store/task/taskSlice";
 
 
+export const DataTable = () => {
+  const dispatch = useDispatch();
 
+  const handleDeleteClick = (id: string) => {
+    dispatch(taskActions.deleteTask(id));
+  };
+
+  return {
+
+  }
+}
 
 export const columns: ColumnDef<Task>[] = [
   {
@@ -90,11 +103,10 @@ export const columns: ColumnDef<Task>[] = [
     accessorKey: "date",
     header: () => <div className="text-right">Date</div>,
     cell: ({ row }) => {
-      
-
       // Format the amount as a dollar amount
-      const formatted = new Intl.DateTimeFormat("en-US", {
-      }).format(new Date(row.getValue("date")));
+      const formatted = new Intl.DateTimeFormat("en-US", {}).format(
+        new Date(row.getValue("date"))
+      );
 
       return <div className="text-right font-medium">{formatted}</div>;
     },
@@ -105,26 +117,32 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const task = row.original;
 
+    
+
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(task.title)}
-            >
-              Copy Task Title
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem >Edit</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Dialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(task.title)}
+              >
+                Copy Task Title
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem>
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </Dialog>
       );
     },
   },
@@ -138,7 +156,7 @@ export function TodoTable() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-const data = useAppSelector((state)=> state.tasks)
+  const data = useAppSelector((state) => state.tasks);
   const table = useReactTable({
     data,
     columns,
@@ -163,9 +181,9 @@ const data = useAppSelector((state)=> state.tasks)
       <div className="flex items-center py-4">
         <Input
           placeholder="Search by status"
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("status")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("status")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -273,3 +291,13 @@ const data = useAppSelector((state)=> state.tasks)
     </div>
   );
 }
+
+
+function deleteTask(id: string): any {
+  throw new Error("Function not implemented.");
+}
+
+function dispatch(arg0: any) {
+  throw new Error("Function not implemented.");
+}
+

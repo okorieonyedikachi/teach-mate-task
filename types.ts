@@ -6,6 +6,7 @@ export const Status = {
 type Status = typeof Status[keyof typeof Status]
 
 export type Task = {
+  id: string
   title: string
   description: string
   date: Date

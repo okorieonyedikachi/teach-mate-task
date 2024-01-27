@@ -40,7 +40,15 @@ import { useAppDispatch } from "@/store/hooks";
 import { taskActions } from "@/store/task/taskSlice";
 import { Status } from "@/types";
 
+
+export const generateUniqueId = (): string => {
+  // Use a timestamp or any other method to generate a unique ID
+  return `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+};
+
+
 const formSchema = z.object({
+  id:z.string(),
   title: z.string().min(2, {
     message: "Must contain at least 2 characters.",
   }),
@@ -49,11 +57,14 @@ const formSchema = z.object({
   }),
   date: z.date({required_error: "Select a date"}),
 });
+
 export function AddNewTask() {
+  
   const dispatch = useAppDispatch();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      id: generateUniqueId(),
       title: "",
       description: "",
       date: undefined,
@@ -72,6 +83,8 @@ export function AddNewTask() {
       })
     );
     form.reset();
+    console.log(values.id);
+    
   }
 
   return (
