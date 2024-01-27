@@ -14,7 +14,9 @@ const Header = () => {
         <div className=" flex mt-3 mx-auto">
           <AddNewTask />
         </div>
-        <div className="bg-ed-600 flex items-center pt-4"><CircleUserRound size={30} className="" /></div>
+        <div className="bg-ed-600 flex items-center pt-4">
+          <CircleUserRound size={30} className="" />
+        </div>
       </div>
     </div>
   );

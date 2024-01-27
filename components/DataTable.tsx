@@ -37,9 +37,42 @@ import {
 } from "@/components/ui/table";
 import { Task } from "@/types";
 import { useAppSelector } from "@/store/hooks";
-import { Dialog, DialogTrigger } from "./ui/dialog";
 import { useDispatch } from "react-redux";
 import { taskActions } from "@/store/task/taskSlice";
+import AddNewTask from "./AddNewTask";
+import EditTask from "./EditTask";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+} from "./ui/form";
+import { Textarea } from "./ui/textarea";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@radix-ui/react-popover";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useForm } from "react-hook-form";
+import z from "zod";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const DataTable = () => {
   // const dispatch = useDispatch();
@@ -114,41 +147,154 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const task = row.original;
       const dispatch = useDispatch();
+      const [open, setOpen] = React.useState(false);
 
       const handleDeleteClick = (id: string) => {
         dispatch(taskActions.deleteTask(id));
       };
+      const formSchema = z.object({
+        id: z.string(),
+        title: z.string().min(2, {
+          message: "Must contain at least 2 characters.",
+        }),
+        description: z.string().min(2, {
+          message: "Must contain at least 2 characters.",
+        }),
+        date: z.date({ required_error: "Select a date" }),
+      });
+
+      const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+          id: "id",
+          title: "title",
+          description: "description",
+          date: new Date(),
+        },
+      });
+      function onSubmit(values: z.infer<typeof formSchema>) {
+        // Do something with the form values.
+        // ✅ This will be type-safe and validated.
+
+        form.reset();
+        console.log(values.id);
+      }
 
       return (
-        // <Dialog>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(task.title)}
-            >
-              Copy Task Title
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            {/* <DialogTrigger> */}
-            <DropdownMenuItem
-              onClick={() => {
-                handleDeleteClick(task.id);
-              }}
-            >
-              Delete
-            </DropdownMenuItem>
-            {/* </DialogTrigger> */}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        // </Dialog>
+        <Dialog>
+          {/* <Dialog open={open} onOpenChange={setOpen}>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Build UI" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="date"
+                  render={({ field }) => (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormItem>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-[280px] justify-start text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a due date</span>
+                              )}
+                            </Button>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          className="bg-white"
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  )}
+                />
+                <DialogFooter>
+                  <div className="w-[120px] rounded-xl">
+                    <Button type="submit" variant={"secondary"}>
+                      Create Task
+                    </Button>
+                  </div>
+                </DialogFooter>
+              </form>
+            </Form>
+          </Dialog> */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(task.title)}
+              >
+                Copy Task Title
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DialogTrigger asChild>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setOpen(true);
+                  }}
+                >
+                  Edit
+                </DropdownMenuItem>
+              </DialogTrigger>
+              <DropdownMenuItem
+                onClick={() => {
+                  handleDeleteClick(task.id);
+                }}
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </Dialog>
       );
     },
   },
