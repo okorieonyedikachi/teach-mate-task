@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## TaskMate AI Task Management app
+A responsive task management web-app built with NextJs and Typescript.
+
 
 ## Getting Started
 
-First, run the development server:
+To run the task mangement app project locally, follow these steps
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Clone the repository git clone (https://github.com/okorieonyedikachi/teach-mate-task.git)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Navigate to the project directory
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- cd teach-mate-task
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- Install dependencies using
 
-## Learn More
+    npm install or yarn install
 
-To learn more about Next.js, take a look at the following resources:
+    Run the development server
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    npm run dev or yarn dev
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- Open your browser and access the app on your localhost.
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Current Features
+- Task List: Displays tasks with titles, descriptions, due dates, and statuses
+- Task Filtering: Allows users to filter tasks based on their status (e.g.,Todo, Ongoing, Completed).
+- Task Creation and Editing: Users can add new tasks and edit existing ones.
+- Responsive Design: Ensures a seamless experience on both desktop and mobile devices.
+- Redux State Management: Efficiently manages the application's state using Redux.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# Component Structure
+-Separation of Concerns: Components are structured to follow the principles of separation of concerns. TaskList and TaskForm handle specific functionalities, promoting code readability and maintainability.
+Responsive Design
+
+- Mobile-First Approach: The responsive design follows a mobile-first approach, ensuring that the dashboard is accessible and functional on various devices.
+GitHub Repository
+
+- Version Control: Utilizing Git for version control allows for easy collaboration and tracking of project changes. The GitHub repository serves as a centralized location for code sharing and project documentation.
+
+## Dependencies 
+- TailwindCSS - Css Framework
+- ShadCn - styled components
+- Redux toolkit - A state manegment tool
+- Zod - Form validation.
+- LucidecIcons
+
+
+
+
+
