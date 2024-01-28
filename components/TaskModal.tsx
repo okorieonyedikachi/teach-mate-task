@@ -42,6 +42,7 @@ export const generateUniqueId = (): string => {
 };
 
 const formSchema = z.object({
+  id:z.string(),
   title: z.string().min(2, { message: 'Must contain at least 2 characters.' }),
   description: z
     .string()
@@ -67,7 +68,7 @@ export function TaskModal(props: Props) {
   const form = useForm<Task>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      id: task?.id || generateUniqueId(),
+      id: task?.id ?? generateUniqueId(),
       title: task?.title || '',
       description: task?.description || '',
       date: task?.date,
@@ -94,7 +95,10 @@ export function TaskModal(props: Props) {
           <form
             onSubmit={form.handleSubmit(values => {
               submitAction(values);
+              form.reset()
               setOpen(false);
+              console.log(values);
+              
             })}
             className="space-y-8"
           >
