@@ -1,6 +1,5 @@
-"use client";
+'use client';
 
-import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,21 +11,19 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+} from '@tanstack/react-table';
+import { ArrowUpDown, ChevronDown } from 'lucide-react';
+import * as React from 'react';
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -34,73 +31,41 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Task } from "@/types";
-import { useAppSelector } from "@/store/hooks";
-import { useDispatch } from "react-redux";
-import { taskActions } from "@/store/task/taskSlice";
-import AddNewTask from "./AddNewTask";
-import EditTask from "./EditTask";
+} from '@/components/ui/table';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { Status, Task } from '@/types';
+
+import { taskActions } from '@/store/task/taskSlice';
+import { Select } from '@radix-ui/react-select';
+import { format } from 'date-fns';
+import DeleteTask from './DeleteTask';
+import EditTask from './EditTask';
+import ViewTask from './ViewTask';
 import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-} from "./ui/form";
-import { Textarea } from "./ui/textarea";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@radix-ui/react-popover";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { useForm } from "react-hook-form";
-import z from "zod";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-
-export const DataTable = () => {
-  // const dispatch = useDispatch();
-
-  // const handleDeleteClick = (id: string) => {
-  //   dispatch(taskActions.deleteTask(id));
-  // };
-
-  return {};
-};
-
-export const columns: ColumnDef<Task>[] = [
+const columns: ColumnDef<Task>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) => (
       <Checkbox
         checked={
           table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        onCheckedChange={value => row.toggleSelected(!!value)}
         aria-label="Select row"
       />
     ),
@@ -108,193 +73,55 @@ export const columns: ColumnDef<Task>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: 'status',
+    header: 'Status',
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
+      <div className="capitalize">{row.getValue('status')}</div>
     ),
   },
   {
-    accessorKey: "title",
+    accessorKey: 'title',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Title
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("title")}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.getValue('title')}</div>,
   },
   {
-    accessorKey: "date",
+    accessorKey: 'description',
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue('description')}</div>
+    ),
+  },
+  {
+    accessorKey: 'date',
     header: () => <div className="text-right">Due Date</div>,
     cell: ({ row }) => {
-      // Format the amount as a dollar amount
-      const formatted = new Intl.DateTimeFormat("en-US", {}).format(
-        new Date(row.getValue("date"))
-      );
+      const formatted = format(row.getValue('date'), 'PPP');
 
       return <div className="text-right font-medium">{formatted}</div>;
     },
   },
   {
-    id: "actions",
+    id: 'actions',
     enableHiding: false,
-    cell: ({ row }) => {
+
+    cell: function Cell({ row }) {
       const task = row.original;
-      const dispatch = useDispatch();
-      const [open, setOpen] = React.useState(false);
-
-      const handleDeleteClick = (id: string) => {
-        dispatch(taskActions.deleteTask(id));
-      };
-      const formSchema = z.object({
-        id: z.string(),
-        title: z.string().min(2, {
-          message: "Must contain at least 2 characters.",
-        }),
-        description: z.string().min(2, {
-          message: "Must contain at least 2 characters.",
-        }),
-        date: z.date({ required_error: "Select a date" }),
-      });
-
-      const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-          id: "id",
-          title: "title",
-          description: "description",
-          date: new Date(),
-        },
-      });
-      function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-
-        form.reset();
-        console.log(values.id);
-      }
 
       return (
-        <Dialog>
-          {/* <Dialog open={open} onOpenChange={setOpen}>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
-              >
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Build UI" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="date"
-                  render={({ field }) => (
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormItem>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-[280px] justify-start text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a due date</span>
-                              )}
-                            </Button>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          className="bg-white"
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  )}
-                />
-                <DialogFooter>
-                  <div className="w-[120px] rounded-xl">
-                    <Button type="submit" variant={"secondary"}>
-                      Create Task
-                    </Button>
-                  </div>
-                </DialogFooter>
-              </form>
-            </Form>
-          </Dialog> */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(task.title)}
-              >
-                Copy Task Title
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DialogTrigger asChild>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setOpen(true);
-                  }}
-                >
-                  Edit
-                </DropdownMenuItem>
-              </DialogTrigger>
-              <DropdownMenuItem
-                onClick={() => {
-                  handleDeleteClick(task.id);
-                }}
-              >
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </Dialog>
+        <div className="flex justify-around">
+          <ViewTask taskId={task.id} />
+          <EditTask taskId={task.id} />
+          <DeleteTask taskId={task.id} />
+        </div>
       );
     },
   },
@@ -303,12 +130,24 @@ export const columns: ColumnDef<Task>[] = [
 export function TodoTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>({
+      description: false,
+    });
   const [rowSelection, setRowSelection] = React.useState({});
-  const data = useAppSelector((state) => state.tasks);
+
+  const dispatch = useAppDispatch();
+  const data = useAppSelector(state => state.task.tasks);
+
+  const deleteSelected = () => {
+    const selected = table
+      .getFilteredSelectedRowModel()
+      .rows.map(row => row.original.id);
+    dispatch(taskActions.deleteMultipleTasks(selected));
+  };
+
   const table = useReactTable({
     data,
     columns,
@@ -330,55 +169,78 @@ export function TodoTable() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 justify-between">
         <Input
-          placeholder="Search by status"
-          value={(table.getColumn("status")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("status")?.setFilterValue(event.target.value)
+          placeholder="Search title"
+          value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
+          onChange={event =>
+            table.getColumn('title')?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+
+        <div className="flex gap-1">
+          <Select
+            onValueChange={value =>
+              table.getColumn('status')?.setFilterValue(value.trim())
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value={' '}>All</SelectItem>
+                {Object.values(Status).map(status => (
+                  <SelectItem value={status} key={status}>
+                    {status}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                Columns <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter(column => column.getCanHide())
+                .map(column => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={value =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -388,16 +250,21 @@ export function TodoTable() {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() && 'selected'}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                  {row.getVisibleCells().map((cell, index, cells) => (
+                    <TableCell
+                      key={cell.id}
+                      style={{
+                        width: index === cells.length - 1 ? '1rem' : undefined,
+                      }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -418,10 +285,18 @@ export function TodoTable() {
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredSelectedRowModel().rows.length} of{' '}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
+
         <div className="space-x-2">
+          <Button
+            onClick={deleteSelected}
+            disabled={table.getFilteredSelectedRowModel().rows.length < 1}
+            variant="destructive"
+          >
+            Delete Selected
+          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -443,11 +318,3 @@ export function TodoTable() {
     </div>
   );
 }
-
-// function deleteTask(id: string): any {
-//   throw new Error("Function not implemented.");
-// }
-
-// function dispatch(arg0: any) {
-//   throw new Error("Function not implemented.");
-// }

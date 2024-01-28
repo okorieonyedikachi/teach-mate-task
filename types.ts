@@ -1,14 +1,14 @@
 export const Status = {
-    Todo : "Todo",
-    Ongoing : "Ongoing",
-    Completed : "Completed"
-} 
-type Status = typeof Status[keyof typeof Status]
+  Todo: 'Todo',
+  Ongoing: 'Ongoing',
+  Completed: 'Completed',
+};
+type Status = (typeof Status)[keyof typeof Status];
 
 export type Task = {
-  id: string
-  title: string
-  description: string
-  date: Date
-  status: Status
-}
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  status: Status;
+};
