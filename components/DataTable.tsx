@@ -169,7 +169,7 @@ export function TodoTable() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4 justify-between">
+      <div className="flex items-center py-4 justify-between sm:space-x-2 flex-wrap sm:flex-nowrap gap-4 sm:gap-0">
         <Input
           placeholder="Search title"
           value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
@@ -179,7 +179,7 @@ export function TodoTable() {
           className="max-w-sm"
         />
 
-        <div className="flex gap-1">
+        <div className="flex gap-1 flex-1 sm:flex-initial">
           <Select
             onValueChange={value =>
               table.getColumn('status')?.setFilterValue(value.trim())
@@ -202,7 +202,7 @@ export function TodoTable() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
+              <Button variant="outline" className="flex-1">
                 Columns <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -283,13 +283,13 @@ export function TodoTable() {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="flex items-center justify-end sm:space-x-2 py-4 flex-wrap sm:flex-nowrap gap-4 sm:gap-0">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{' '}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
 
-        <div className="space-x-2">
+        <div className="space-x-2 flex w-full sm:w-fit justify-between">
           <Button
             onClick={deleteSelected}
             disabled={table.getFilteredSelectedRowModel().rows.length < 1}
@@ -297,22 +297,24 @@ export function TodoTable() {
           >
             Delete Selected
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </div>
     </div>
