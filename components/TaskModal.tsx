@@ -94,10 +94,13 @@ export function TaskModal(props: Props) {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(values => {
-              submitAction(values);
+              submitAction({
+                ...values, 
+                id:task?.id || generateUniqueId(),
+              });
               form.reset()
               setOpen(false);
-              console.log(values);
+              
               
             })}
             className="space-y-8"
